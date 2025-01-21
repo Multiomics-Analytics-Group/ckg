@@ -80,7 +80,7 @@ def get_configuration(processing_tool, data_type):
             tool_configuration = config[processing_tool]
             if data_type in tool_configuration:
                 configuration = tool_configuration[data_type]
-
+    
     return configuration
 
 
@@ -112,6 +112,7 @@ def parse_dataset(file_path, configuration):
     dataset = None
     if os.path.isfile(file_path):
         data, regex = load_dataset(file_path, configuration)
+        print(data, regex)
         if data is not None:
             log = 'log2'
             if 'log' in configuration:

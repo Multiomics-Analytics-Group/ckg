@@ -1677,7 +1677,7 @@ def get_table(data, identifier, args):
             data[c] = data[c].apply(lambda x: ";".join([str(i) for i in x]))
 
         data_trace = dash_table.DataTable(id='table_'+identifier,
-                                            data=data.astype(str).to_dict("rows"),
+                                            data=data.astype(str).to_dict("index"),
                                             columns=[{"name": str(i).replace('_', ' ').title(), "id": i} for i in data.columns],
                                             # css=[{
                                             #     'selector': '.dash-cell div.dash-cell-value',
@@ -2253,7 +2253,7 @@ def get_cytoscape_network(net, identifier, args):
 
     return net_div
 
-def save_DASH_plot(plot, name, plot_format='svg', directory='.', width=800, height=700):
+def save_DASH_plot(plot, name, plot_format='svg', directory='.', width=1800, height=1700):
     """
     This function saves a plotly figure to a specified directory, in a determined format.
 

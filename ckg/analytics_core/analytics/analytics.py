@@ -221,7 +221,7 @@ def extract_number_missing(data, min_valid, drop_cols=['sample'], group='group')
     else:
         groups = data.copy()
         groups = groups.drop(drop_cols, axis=1)
-        groups = groups.set_index(group).notnull().groupby(level=0).sum(axis=1)
+        groups = groups.set_index(group).notnull().groupby(level=0).sum()
         groups = groups[groups >= min_valid]
 
     groups = groups.dropna(how='all', axis=1)
@@ -1554,7 +1554,7 @@ def calculate_pairwise_ttest(df, column, subject='subject', group='group', corre
 
     posthoc_columns = ['Contrast', 'group1', 'group2', 'mean(group1)', 'std(group1)', 'mean(group2)', 'std(group2)', 'posthoc Paired', 'posthoc Parametric', 'posthoc T-Statistics', 'posthoc dof', 'posthoc tail', 'posthoc pvalue', 'posthoc BF10', 'posthoc effsize']
     valid_cols = ['group1', 'group2', 'mean(group1)', 'std(group1)', 'mean(group2)', 'std(group2)', 'posthoc Paired', 'posthoc Parametric', 'posthoc T-Statistics', 'posthoc dof', 'posthoc tail', 'posthoc pvalue', 'posthoc BF10', 'posthoc effsize']
-    posthoc = df.pairwise_ttests(dv=column, between=group, subject=subject, effsize='hedges', return_desc=True, padjust=correction)
+    posthoc = df.pairwise_tests(dv=column, between=group, subject=subject, effsize='hedges', return_desc=True, padjust=correction)
     posthoc.columns =  posthoc_columns
     posthoc = posthoc[valid_cols]
     posthoc = complement_posthoc(posthoc, column, is_logged)
@@ -1851,7 +1851,7 @@ def correct_pairwise_ttest(df, alpha, correction='fdr_bh'):
             if posthoc_df.empty:
                 posthoc_df = pd.DataFrame({"index":index, "posthoc padj":posthoc_padj})
             else:
-                posthoc_df = posthoc_df.append(pd.DataFrame({"index":index, "posthoc padj":posthoc_padj}))
+                posthoc_df = pd.concat([posthoc_df, pd.DataFrame({"index":index, "posthoc padj":posthoc_padj})], ignore_index=True)
         posthoc_df = posthoc_df.set_index("index")
         df = df.join(posthoc_df)
 
@@ -2346,7 +2346,7 @@ def run_up_down_regulation_enrichment(regulation_data, annotation, identifier='i
         enrichment_results[g1+'~'+g2] = enrichment
         enrichment = run_regulation_enrichment(df, annotation, identifier=identifier, groups=groups, annotation_col=annotation_col, reject_col='down_pairwise_regulation', group_col=group_col, method=method, correction=correction)
         enrichment['direction'] = 'downregulated'
-        enrichment_results[g1+'~'+g2] = enrichment_results[g1+'~'+g2].append(enrichment)
+        enrichment_results[g1+'~'+g2] = pd.concat([enrichment_results[g1+'~'+g2],enrichment], ignore_index=True)
 
     return enrichment_results
 
