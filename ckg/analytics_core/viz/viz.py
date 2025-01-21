@@ -2276,6 +2276,11 @@ def save_DASH_plot(plot, name, plot_format='svg', directory='.', width=1800, hei
                 pio.write_image(plot.figure, plot_file, width=width, height=height)
             else:
                 pio.write_image(plot, plot_file, width=width, height=height)
+        elif plot_format == 'html':
+            if hasattr(plot, 'figure'):
+                pio.write_html(plot.figure, plot_file)
+            else:
+                pio.write_html(plot, plot_file)
         elif plot_format == 'json':
             figure_json = json.dumps(plot.figure, cls=plotly.utils.PlotlyJSONEncoder)
             with open(plot_file, 'w') as f:

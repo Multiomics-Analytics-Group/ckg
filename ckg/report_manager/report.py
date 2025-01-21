@@ -226,6 +226,7 @@ class Report:
                         try:
                             viz.save_DASH_plot(plot.figure, name=figure_name, plot_format='svg', directory=directory)
                             viz.save_DASH_plot(plot.figure, name=figure_name, plot_format='png', directory=directory)
+                            viz.save_DASH_plot(plot.figure, name=figure_name, plot_format='html', directory=directory)
                             saved.add(figure_name)
                         except Exception:
                             pass
